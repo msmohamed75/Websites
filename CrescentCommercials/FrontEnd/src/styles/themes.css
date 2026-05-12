@@ -1,0 +1,57 @@
+
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #ffffff;
+  --accent: #10b981;
+}
+
+[data-theme="emerald"] {
+  --bg: linear-gradient(135deg, #064e3b, #022c22);
+  --card: rgba(255,255,255,0.08);
+  --text: #e5e7eb;
+  --accent: #10b981;
+}
+
+[data-theme="white"] {
+  --bg: #ffffff;
+  --card: #f3f4f6;
+  --text: #111827;
+  --accent: #2563eb;
+}
+
+[data-theme="saffron"] {
+  --bg: linear-gradient(135deg, #ff9933, #ffcc66);
+  --card: rgba(255,255,255,0.2);
+  --text: #1f2937;
+  --accent: #b45309;
+}
+
+[data-theme="blue"] {
+  --bg: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+  --accent: #38bdf8;
+}
+
+[data-theme="graphite"] {
+  --bg: #1f2937;
+  --card: #374151;
+  --text: #e5e7eb;
+  --accent: #9ca3af;
+}
+
+[data-theme="purple"] {
+  --bg: linear-gradient(135deg, #581c87, #9333ea);
+  --accent: #fbbf24;
+}
+
+[data-theme="green"] {
+  --bg: #ecfdf5;
+  --card: #d1fae5;
+  --text: #065f46;
+  --accent: #10b981;
+}
+
+[data-theme="orange"] {
+  --bg: linear-gradient(135deg, #ea580c, #fb923c);
+  --accent: #ffffff;
+}
