@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Techwander — Coming Soon</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 1.5rem;
+      padding: 3rem 2.5rem;
+      max-width: 520px;
+      width: 100%;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    .gear {
+      font-size: 3.5rem;
+      animation: spin 6s linear infinite;
+      display: inline-block;
+      margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .domain {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 1.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      margin-bottom: 2rem;
+    }
+
+    .cc-link {
+      display: inline-block;
+      padding: 0.65rem 1.75rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #7c3aed, #3b82f6);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 4px 20px rgba(99,60,255,0.35);
+    }
+
+    .cc-link:hover {
+      opacity: 0.88;
+      transform: translateY(-2px);
+    }
+
+    .footer {
+      margin-top: 2.5rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="gear">&#9881;</div>
+    <h1>Under Construction</h1>
+    <div class="domain">techwander.net</div>
+    <p>We are working on something great.<br>This site will be ready soon — stay tuned.</p>
+    <div class="divider"></div>
+    <a class="cc-link" href="/cc/">Visit Crescent Commercials &rarr;</a>
+    <div class="footer">&copy; 2026 Techwander. All rights reserved.</div>
+  </div>
+</body>
+</html>
