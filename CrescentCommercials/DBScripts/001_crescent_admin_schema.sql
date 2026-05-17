@@ -1,0 +1,94 @@
+﻿CREATE DATABASE IF NOT EXISTS crescent_commercials
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE crescent_commercials;
+
+CREATE TABLE IF NOT EXISTS home_content (
+  id INT NOT NULL PRIMARY KEY DEFAULT 1,
+  eyebrow VARCHAR(200) NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  intro TEXT NOT NULL,
+  mission_title VARCHAR(200) NOT NULL,
+  mission TEXT NOT NULL,
+  image_url TEXT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT chk_home_content_singleton CHECK (id = 1)
+);
+
+CREATE TABLE IF NOT EXISTS home_topics (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  home_content_id INT NOT NULL DEFAULT 1,
+  sort_order INT NOT NULL DEFAULT 0,
+  topic VARCHAR(500) NOT NULL,
+  CONSTRAINT fk_home_topics_home FOREIGN KEY (home_content_id) REFERENCES home_content(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS business_units (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  slug VARCHAR(160) NOT NULL UNIQUE,
+  name VARCHAR(200) NOT NULL,
+  icon VARCHAR(100) NULL,
+  image_url TEXT NULL,
+  image_360_url TEXT NULL,
+  description TEXT NULL,
+  accent_color VARCHAR(20) NULL,
+  is_coming_soon BOOLEAN NOT NULL DEFAULT FALSE,
+  sort_order INT NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS business_unit_features (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  business_unit_id BIGINT NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  feature VARCHAR(500) NOT NULL,
+  CONSTRAINT fk_bu_features_unit FOREIGN KEY (business_unit_id) REFERENCES business_units(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS business_unit_images (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  business_unit_id BIGINT NOT NULL,
+  image_url TEXT NOT NULL,
+  alt_text VARCHAR(250) NULL,
+  is_primary BOOLEAN NOT NULL DEFAULT FALSE,
+  is_360 BOOLEAN NOT NULL DEFAULT FALSE,
+  sort_order INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_bu_images_unit FOREIGN KEY (business_unit_id) REFERENCES business_units(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS products (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  business_unit_id BIGINT NULL,
+  product_name VARCHAR(240) NOT NULL,
+  category VARCHAR(180) NULL,
+  sub_category VARCHAR(180) NULL,
+  description TEXT NULL,
+  price DECIMAL(12,2) NULL,
+  price_display VARCHAR(80) NULL,
+  offers TEXT NULL,
+  image_url TEXT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  sort_order INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_products_unit FOREIGN KEY (business_unit_id) REFERENCES business_units(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS product_features (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  product_id BIGINT NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  feature VARCHAR(500) NOT NULL,
+  CONSTRAINT fk_product_features_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS product_package_sizes (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  product_id BIGINT NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  package_size VARCHAR(120) NOT NULL,
+  CONSTRAINT fk_product_package_sizes_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);

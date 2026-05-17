@@ -1,0 +1,42 @@
+
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --primary: #b68d40;
+  --secondary: #d4b483;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #ede9e3;
+  --shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #fffdf8, #f8f5ef);
+}
+
+.product-card {
+  background: white;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.product-card:hover {
+  transform: scale(1.02);
+}
+
+.primary-btn {
+  background: linear-gradient(90deg, #b68d40, #d4b483);
+  color: white;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-weight: 600;
+}

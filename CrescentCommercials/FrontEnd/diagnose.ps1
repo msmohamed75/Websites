@@ -15,28 +15,25 @@ function Invoke-SSH($cmd) {
 }
 
 Write-Host "`n--- Nginx status ---" -ForegroundColor Cyan
-Invoke-SSH "systemctl status nginx --no-pager | head -20"
-
-Write-Host "`n--- Port 80 listening ---" -ForegroundColor Cyan
-Invoke-SSH "ss -tlnp | grep ':80'"
+Invoke-SSH "systemctl is-active nginx"
 
 Write-Host "`n--- sites-enabled ---" -ForegroundColor Cyan
 Invoke-SSH "ls -la /etc/nginx/sites-enabled/"
 
 Write-Host "`n--- techwander.net config ---" -ForegroundColor Cyan
-Invoke-SSH "cat /etc/nginx/sites-enabled/techwander.net 2>/dev/null || echo NOT FOUND"
-
-Write-Host "`n--- default-redirect config ---" -ForegroundColor Cyan
-Invoke-SSH "cat /etc/nginx/sites-enabled/default-redirect 2>/dev/null || echo NOT FOUND"
+Invoke-SSH "cat /etc/nginx/sites-available/techwander.net 2>/dev/null || echo 'FILE NOT FOUND'"
 
 Write-Host "`n--- cc.conf snippet ---" -ForegroundColor Cyan
-Invoke-SSH "cat /etc/nginx/snippets/cc.conf 2>/dev/null || echo NOT FOUND"
+Invoke-SSH "cat /etc/nginx/snippets/cc.conf 2>/dev/null || echo 'FILE NOT FOUND'"
 
-Write-Host "`n--- /var/www/cc contents ---" -ForegroundColor Cyan
-Invoke-SSH "ls /var/www/cc/ 2>/dev/null || echo EMPTY"
+Write-Host "`n--- default-redirect config ---" -ForegroundColor Cyan
+Invoke-SSH "cat /etc/nginx/sites-enabled/default-redirect 2>/dev/null || echo 'FILE NOT FOUND'"
+
+Write-Host "`n--- Test HTTP response for techwander.net ---" -ForegroundColor Cyan
+Invoke-SSH "curl -s -o /dev/null -w 'HTTP %{http_code} -> %{redirect_url}' -H 'Host: techwander.net' http://localhost/cc/ 2>&1"
 
 Write-Host "`n--- nginx config test ---" -ForegroundColor Cyan
 Invoke-SSH "nginx -t 2>&1"
 
-Write-Host "`n--- nginx error log (last 20 lines) ---" -ForegroundColor Cyan
-Invoke-SSH "tail -20 /var/log/nginx/error.log 2>/dev/null"
+Write-Host "`n--- nginx error log (last 10 lines) ---" -ForegroundColor Cyan
+Invoke-SSH "tail -10 /var/log/nginx/error.log 2>/dev/null"

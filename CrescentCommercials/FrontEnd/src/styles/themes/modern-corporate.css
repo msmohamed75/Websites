@@ -1,0 +1,42 @@
+
+:root {
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --primary: #1d4ed8;
+  --secondary: #2563eb;
+  --text: #0f172a;
+  --muted: #475569;
+  --border: #dbeafe;
+  --shadow: 0 10px 20px rgba(15,23,42,0.08);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #eff6ff, #ffffff);
+}
+
+.product-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+}
+
+.primary-btn {
+  background: linear-gradient(90deg, #1d4ed8, #2563eb);
+  color: white;
+  border-radius: 14px;
+  padding: 12px 24px;
+  font-weight: 600;
+}

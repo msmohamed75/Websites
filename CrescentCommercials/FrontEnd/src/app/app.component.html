@@ -1,709 +1,749 @@
-<main [ngClass]="'theme-' + theme" class="h-screen soft-bg p-3 md:p-4 flex items-start justify-center overflow-hidden">
+<main [ngClass]="'theme-' + theme" class="cc-page">
+  <header class="cc-header" *ngIf="!isAdminPage">
+    <button class="brand" type="button" (click)="setView('products')">
+      <img src="assets/Logo/CCLogo.png" alt="Crescent Commercials logo" />
+      <span>
+        <strong>Crescent Commercials</strong>
+        <small>Manufacturing  -  Trading  -  Authentic Indian Products</small>
+      </span>
+    </button>
 
-  <!-- Backdrop: closes any open menu -->
-  <div *ngIf="showProductsMenu || showMobileMenu || showLangMenu || showThemeMenu"
-       class="fixed inset-0 z-30"
-       (click)="closeAllMenus()"></div>
+    <nav class="nav desktop-only">
+      <button type="button" [class.active]="currentView === 'home'" (click)="setView('home')"><i class="pi pi-home"></i> Home</button>
+      <button type="button" [class.active]="['products','wax-polish','fire-crackers','spices','clothing','gift-hampers'].includes(currentView)" (click)="setView('products')"><i class="pi pi-box"></i> Business Unit</button>
+      <button type="button" [class.active]="currentView === 'contact'" (click)="setView('contact')"><i class="pi pi-envelope"></i> Contact Us</button>
+    </nav>
 
-  <!-- ══ UNIFIED GLASS CARD ══ -->
-  <div class="glass rounded-3xl w-full max-w-7xl h-full flex flex-col relative z-40 overflow-hidden">
-
-    <!-- ── CARD HEADER ── -->
-    <div class="shrink-0 px-5 md:px-8 pt-4 pb-0 relative z-40">
-
-      <!-- Single header row: company (left) | nav+controls (desktop right) | lang+hamburger (mobile right) -->
-      <div class="flex items-center justify-between gap-4">
-
-        <button type="button" class="flex items-center gap-2.5 shrink-0" (click)="setView('home')">
-          <img src="assets/Logo/CCLogo.png" alt="CC Logo" class="h-8 md:h-12 w-auto" />
-          <div class="flex flex-col items-start">
-            <span class="font-black text-2xl md:text-4xl leading-tight">Crescent Commercials</span>
-            <span class="hidden md:block text-xs font-extrabold tracking-widest text-[var(--muted)] uppercase mt-0.5">{{t[lang].badge}}</span>
-          </div>
-        </button>
-
-        <!-- Desktop: nav + lang + theme -->
-        <div class="hidden md:flex items-center gap-4">
-          <nav class="flex gap-5 font-bold items-center text-sm">
-            <button type="button" (click)="setView('home')"
-                    [class.text-[var(--c2)]]="currentView === 'home'">{{t[lang].home}}</button>
-
-            <div class="relative">
-              <button type="button" class="flex items-center gap-1.5"
-                      [class.text-[var(--c2)]]="['wax-polish','fire-crackers','spices','clothing'].includes(currentView)"
-                      (click)="showProductsMenu = !showProductsMenu; showMobileMenu = false; showLangMenu = false; showThemeMenu = false">
-                {{t[lang].products}}
-                <i class="pi text-xs" [class.pi-chevron-down]="!showProductsMenu" [class.pi-chevron-up]="showProductsMenu"></i>
-              </button>
-              <div *ngIf="showProductsMenu" class="absolute top-full left-0 mt-2 glass rounded-2xl py-2 w-56 z-50 shadow-2xl">
-                <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 hover:bg-white/10 transition-colors font-semibold"
-                        (click)="setView('wax-polish')"><span>🟡</span> {{t[lang].waxPolishMenu}}</button>
-                <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 hover:bg-white/10 transition-colors font-semibold"
-                        (click)="setView('fire-crackers')"><span>🎆</span> {{t[lang].firecrackersMenu}}</button>
-                <div class="border-t border-white/10 my-1.5 mx-3"></div>
-                <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 hover:bg-white/10 transition-colors font-semibold opacity-60"
-                        (click)="setView('spices')">
-                  <span>🌶️</span><span class="flex-1 text-left">{{t[lang].spicesMenu}}</span>
-                  <span class="text-xs btn-gloss px-2 py-0.5 rounded-full">Soon</span>
-                </button>
-                <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 hover:bg-white/10 transition-colors font-semibold opacity-60"
-                        (click)="setView('clothing')">
-                  <span>🧥</span><span class="flex-1 text-left">{{t[lang].clothingMenu}}</span>
-                  <span class="text-xs btn-gloss px-2 py-0.5 rounded-full">Soon</span>
-                </button>
-              </div>
-            </div>
-
-            <button type="button" (click)="setView('contact')"
-                    [class.text-[var(--c2)]]="currentView === 'contact'">{{t[lang].contact}}</button>
-
-            <button type="button" (click)="setView('cart')" title="Enquiry cart"
-                    class="relative" [class.text-[var(--c2)]]="currentView === 'cart'">
-              <i class="pi pi-shopping-cart text-base"></i>
-              <span *ngIf="cartCount > 0"
-                    class="absolute -top-1.5 -right-2 btn-gloss text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black leading-none">
-                {{cartCount}}
-              </span>
-            </button>
-          </nav>
-
-          <div class="h-4 w-px divider-bg"></div>
-
-          <!-- Language selector (desktop) -->
-          <div class="relative">
-            <button type="button" class="custom-dropdown-btn" title="Select language"
-                    (click)="showLangMenu = !showLangMenu; showThemeMenu = false; showProductsMenu = false">
-              <span class="text-base leading-none">{{currentLang.flag}}</span>
-              <span>{{currentLang.short}}</span>
-              <i class="pi pi-chevron-down text-xs opacity-50"></i>
-            </button>
-            <div *ngIf="showLangMenu"
-                 class="custom-dropdown-panel absolute top-full right-0 mt-2 w-44 z-50">
-              <button *ngFor="let l of languages" type="button" class="custom-dropdown-option"
-                      [class.option-active]="l.value === lang"
-                      [title]="l.label"
-                      (click)="lang = l.value; showLangMenu = false">
-                <span class="text-lg leading-none">{{l.flag}}</span>
-                <div class="flex flex-col items-start">
-                  <span class="font-semibold text-sm">{{l.label}}</span>
-                  <span class="text-xs opacity-50">{{l.short}}</span>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          <!-- Theme selector (desktop) -->
-          <div class="relative">
-            <button type="button" class="custom-dropdown-btn" title="Select theme"
-                    (click)="showThemeMenu = !showThemeMenu; showLangMenu = false; showProductsMenu = false">
-              <span class="w-3.5 h-3.5 rounded-full shrink-0 border border-white/30"
-                    [style.background]="currentTheme.accent"></span>
-              <span>{{currentTheme.label}}</span>
-              <i class="pi pi-chevron-down text-xs opacity-50"></i>
-            </button>
-            <div *ngIf="showThemeMenu"
-                 class="custom-dropdown-panel theme-panel absolute top-full right-0 mt-2 w-64 z-50">
-              <button *ngFor="let th of themes" type="button" class="custom-dropdown-option"
-                      [class.option-active]="th.value === theme"
-                      [title]="th.label"
-                      (click)="setTheme(th.value)">
-                <span class="w-8 h-8 rounded-full shrink-0 border-2 border-white/20 flex items-center justify-center"
-                      [style.background]="'linear-gradient(135deg,' + th.accent + '55,' + th.accent + ')'">
-                </span>
-                <div class="flex flex-col items-start">
-                  <span class="font-semibold text-sm">{{th.label}}</span>
-                  <span class="text-xs opacity-50">{{th.sub}}</span>
-                </div>
-              </button>
-            </div>
-          </div>
+    <div class="header-actions desktop-only">
+      <div class="dropdown">
+        <button type="button" class="pill-control" (click)="showLangMenu = !showLangMenu; showThemeMenu = false"><i class="pi pi-globe"></i>{{currentLang.short}}<i class="pi pi-chevron-down dropdown-chev"></i></button>
+        <div class="dropdown-menu small" *ngIf="showLangMenu">
+          <button type="button" *ngFor="let l of languages" (click)="setLang(l.value)">{{l.flag}} {{l.label}}</button>
         </div>
-
-        <!-- Mobile controls: hamburger only -->
-        <div class="flex items-center md:hidden">
-          <button type="button" class="p-2 -mr-1" title="Toggle menu"
-                  (click)="showMobileMenu = !showMobileMenu; showThemeMenu = false; showLangMenu = false">
-            <i class="pi text-xl" [class.pi-bars]="!showMobileMenu" [class.pi-times]="showMobileMenu"></i>
+      </div>
+      <div class="dropdown">
+        <button type="button" class="pill-control" (click)="showThemeMenu = !showThemeMenu; showLangMenu = false"><i class="pi pi-palette"></i>Theme: {{currentTheme.label}}<i class="pi pi-chevron-down dropdown-chev"></i></button>
+        <div class="dropdown-menu" *ngIf="showThemeMenu">
+          <button type="button" *ngFor="let th of themes" (click)="setTheme(th.value)">
+            <span class="swatch" [style.background]="th.accent"></span>
+            <span><b>{{th.label}}</b><small>{{th.sub}}</small></span>
           </button>
         </div>
       </div>
-
-      <!-- Mobile: badge text below company name -->
-      <p class="tagline md:hidden text-xs font-bold tracking-wider text-[var(--muted)] uppercase mt-0.5">
-        {{t[lang].badge}}
-      </p>
-
-      <!-- Mobile menu panel -->
-      <div *ngIf="showMobileMenu" class="mt-2 glass rounded-2xl py-2 shadow-2xl md:hidden">
-        <button type="button" class="flex w-full items-center gap-3 px-5 py-3 hover:bg-white/10 font-bold"
-                (click)="setView('home')">🏠 {{t[lang].home}}</button>
-        <div class="border-t border-white/10 mx-4 my-1"></div>
-        <p class="px-5 py-1 text-xs font-black uppercase tracking-widest text-[var(--muted)]">{{t[lang].products}}</p>
-        <button type="button" class="flex w-full items-center gap-3 px-5 py-2.5 hover:bg-white/10 font-semibold"
-                (click)="setView('wax-polish')"><span>🟡</span> {{t[lang].waxPolishMenu}}</button>
-        <button type="button" class="flex w-full items-center gap-3 px-5 py-2.5 hover:bg-white/10 font-semibold"
-                (click)="setView('fire-crackers')"><span>🎆</span> {{t[lang].firecrackersMenu}}</button>
-        <button type="button" class="flex w-full items-center gap-3 px-5 py-2.5 hover:bg-white/10 font-semibold opacity-60"
-                (click)="setView('spices')">
-          <span>🌶️</span><span class="flex-1 text-left">{{t[lang].spicesMenu}}</span>
-          <span class="text-xs btn-gloss px-2 py-0.5 rounded-full mr-2">Soon</span>
-        </button>
-        <button type="button" class="flex w-full items-center gap-3 px-5 py-2.5 hover:bg-white/10 font-semibold opacity-60"
-                (click)="setView('clothing')">
-          <span>🧥</span><span class="flex-1 text-left">{{t[lang].clothingMenu}}</span>
-          <span class="text-xs btn-gloss px-2 py-0.5 rounded-full mr-2">Soon</span>
-        </button>
-        <div class="border-t border-white/10 mx-4 my-1"></div>
-        <button type="button" class="flex w-full items-center gap-3 px-5 py-3 hover:bg-white/10 font-bold"
-                (click)="setView('contact')">📞 {{t[lang].contact}}</button>
-        <button type="button" class="flex w-full items-center gap-3 px-5 py-3 hover:bg-white/10 font-bold"
-                (click)="setView('cart')">
-          <div class="relative w-5 h-5 flex items-center justify-center">
-            <i class="pi pi-shopping-cart"></i>
-            <span *ngIf="cartCount > 0"
-                  class="absolute -top-1 -right-1.5 btn-gloss text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black leading-none">
-              {{cartCount}}
-            </span>
-          </div>
-          Enquiry Cart
-        </button>
-        <div class="border-t border-white/10 mx-4 my-1"></div>
-        <p class="px-5 py-1 text-xs font-black uppercase tracking-widest text-[var(--muted)]">Language</p>
-        <button *ngFor="let l of languages" title="Select language" type="button"
-                class="flex w-full items-center gap-3 px-5 py-2.5 hover:bg-white/10 font-semibold"
-                [class.option-active]="l.value === lang"
-                (click)="lang = l.value; showMobileMenu = false">
-          <span class="text-xl leading-none">{{l.flag}}</span>
-          <span class="flex-1 text-left">{{l.label}}</span>
-          <i *ngIf="l.value === lang" class="pi pi-check text-xs mr-2 text-[var(--c2)]"></i>
-        </button>
-        <div class="border-t border-white/10 mx-4 my-1"></div>
-        <div class="px-5 py-2">
-          <p class="text-xs font-black uppercase tracking-widest text-[var(--muted)] mb-2">Theme</p>
-          <div class="grid grid-cols-4 gap-2">
-            <button *ngFor="let th of themes" type="button"
-                    [title]="th.label"
-                    (click)="setTheme(th.value)"
-                    class="flex flex-col items-center gap-1">
-              <span class="w-8 h-8 rounded-full border-2 block"
-                    [class.border-white]="th.value === theme"
-                    [class.border-transparent]="th.value !== theme"
-                    [style.background]="'linear-gradient(135deg,' + th.accent + '55,' + th.accent + ')'">
-              </span>
-              <span class="text-[9px] leading-tight text-center text-[var(--muted)] truncate w-full">{{th.label.split(' ')[0]}}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3px gradient divider line -->
-      <div class="gradient-line h-[3px] rounded-full mt-3"></div>
+      <button class="cart-btn glossy-cart" type="button" title="Cart" aria-label="Cart" (click)="setView('cart')"><i class="pi pi-shopping-cart"></i><span *ngIf="cartCount">{{cartCount}}</span></button>
     </div>
 
-    <!-- ══ CONTENT AREA ══ -->
-    <div class="flex-1 min-h-0 flex flex-col overflow-hidden" id="content-area">
+    <button type="button" class="mobile-menu-btn" (click)="showMobileMenu = !showMobileMenu">Menu</button>
+  </header>
 
-      <!-- ── HOME ── -->
-      <div *ngIf="currentView === 'home'" class="flex-1 min-h-0 flex flex-col overflow-y-auto px-5 md:px-8 py-4">
+  <div class="mobile-menu" *ngIf="!isAdminPage && showMobileMenu">
+    <button type="button" (click)="setView('products')">Business Unit</button>
+    <button type="button" (click)="setView('contact')">Contact Us</button>
+    <button type="button" (click)="setView('cart')">Cart {{cartCount ? '(' + cartCount + ')' : ''}}</button>
+    <div class="mobile-theme-row">
+      <button type="button" *ngFor="let th of themes" (click)="setTheme(th.value)">{{th.label}}</button>
+    </div>
+  </div>
 
-        <!-- Who We Are -->
-        <div class="grid md:grid-cols-2 gap-4 md:gap-5 md:items-center py-2 md:py-3 md:flex-1 md:min-h-0">
-          <div class="homecontent flex flex-col">
+  <nav class="breadcrumb" *ngIf="!isAdminPage && breadcrumbs.length">
+    <div class="breadcrumb-path">
+      <button type="button" class="back-nav-btn" *ngIf="currentView !== 'home'" (click)="goBack()" title="Previous page" aria-label="Previous page"><i class="pi pi-arrow-left"></i></button>
+      <ng-container *ngFor="let item of breadcrumbs; let last = last">
+        <button type="button" [disabled]="last" (click)="setView(item.view)">{{item.label}}</button>
+        <span *ngIf="!last">></span>
+      </ng-container>
+    </div>
+    <div class="breadcrumb-actions" *ngIf="showProductListing">
+      <label class="select-icon-wrap" title="Sort by">
+        <i class="pi pi-sort-alt"></i>
+        <select [(ngModel)]="selectedSort" aria-label="Sort by">
+          <option>Featured</option>
+          <option>Name</option>
+          <option>Price Low</option>
+        </select>
+      </label>
+      <label class="select-icon-wrap" title="Filter">
+        <i class="pi pi-filter"></i>
+        <select [(ngModel)]="selectedWaxCategory" (ngModelChange)="setProductCategory($event)" aria-label="Filter">
+          <option *ngFor="let c of productCategoryFilters" [value]="c.name">{{c.name}} ({{c.count}})</option>
+        </select>
+      </label>
+    </div>
+  </nav>
 
-            <!-- Who We Are -->
-            <div class="mb-3">
-              <h2 class="text-xl md:text-2xl font-black mb-1.5">{{t[lang].aboutTitle}}</h2>
-              <p class="text-[var(--muted)] leading-6 text-sm">{{t[lang].aboutText}}</p>
+  <section *ngIf="!isAdminPage && currentView === 'home'" class="home-flat-page home-compact">
+    <div class="home-flat-content">
+      <div class="home-flat-text">
+        <span class="eyebrow">{{homeContent.eyebrow}}</span>
+
+        <h1>{{homeContent.title}}</h1>
+        <p>
+          {{homeContent.intro}}
+        </p>
+
+        <h2>{{homeContent.missionTitle}}</h2>
+        <p>
+          {{homeContent.mission}}
+        </p>
+
+        <ul class="mission-feature-list">
+          <li *ngFor="let topic of homeContent.topics"><span>*</span>{{topic}}</li>
+        </ul>
+
+        <div class="home-contact-actions">
+          <button type="button" class="gold-btn" (click)="setView('products')">Explore Business Unit -></button>
+          <a [href]="openWhatsApp('Hello Crescent Commercials, I would like to enquire about your products.')" target="_blank" class="round-contact-btn whatsapp" title="Contact via WhatsApp" aria-label="Contact via WhatsApp">
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M16.04 3C9.42 3 4.03 8.32 4.03 14.86c0 2.1.56 4.15 1.63 5.96L4 29l8.38-2.17a12.2 12.2 0 0 0 3.66.56c6.62 0 12.01-5.32 12.01-11.86S22.66 3 16.04 3zm0 22.3c-1.16 0-2.3-.18-3.39-.55l-.49-.17-4.96 1.29.99-4.82-.25-.5a9.72 9.72 0 0 1-1.11-4.69c0-5.39 4.44-9.78 9.9-9.78s9.9 4.39 9.9 9.78-4.44 9.44-9.9 9.44zm5.42-7.28c-.3-.15-1.75-.86-2.02-.95-.27-.1-.47-.15-.66.15-.2.3-.76.95-.93 1.14-.17.2-.34.22-.64.07-.3-.15-1.25-.46-2.38-1.45-.88-.78-1.47-1.74-1.65-2.04-.17-.3-.02-.46.13-.61.13-.13.3-.34.44-.51.15-.17.2-.3.3-.49.1-.2.05-.37-.02-.52-.07-.15-.66-1.58-.9-2.16-.24-.57-.48-.49-.66-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.07 2.87 1.22 3.07c.15.2 2.11 3.18 5.12 4.46.72.31 1.28.49 1.72.63.72.23 1.37.2 1.89.12.58-.09 1.75-.71 2-1.39.25-.68.25-1.27.17-1.39-.07-.12-.27-.2-.57-.35z"/>
+            </svg>
+          </a>
+          <button type="button" class="round-contact-btn contact" title="Contact Us" aria-label="Contact Us" (click)="setView('contact')"><i class="pi pi-envelope"></i></button>
+        </div>
+      </div>
+
+      <div class="home-flat-art">
+        <img [src]="homeContent.image" alt="Crescent Commercials master products" class="home-master-image" />
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="!isAdminPage && currentView === 'products'" class="products-home">
+    <div class="section-heading">
+      <h1>Our Business Unit</h1>
+      <p class="products-subtitle-premium">Premium quality products crafted for your needs</p>
+      <div class="gold-divider"><i></i></div>
+    </div>
+
+    <div class="product-carousel-wrap">
+      <button type="button" class="arrow left" (click)="prevProducts()" title="Previous" aria-label="Previous business units"><i class="pi pi-chevron-left"></i></button>
+      <div class="product-carousel">
+        <article class="category-card" *ngFor="let p of visibleProductCategories" [style.--accent]="p.color">
+          <div class="card-top">
+            <div class="cat-icon">{{p.icon}}</div>
+            <span class="soon" *ngIf="p.soon">Coming Soon</span>
+          </div>
+          <div class="category-img"><img [src]="p.image" [alt]="p.title" /></div>
+          <h2>{{p.title}}</h2>
+          <p>{{p.subtitle}}</p>
+          <ul>
+            <li *ngFor="let f of p.features"><span>&#10003;</span>{{f}}</li>
+          </ul>
+          <button type="button" class="explore-btn" (click)="setView(p.id)">Explore -></button>
+        </article>
+      </div>
+      <button type="button" class="arrow right" (click)="nextProducts()" title="Next" aria-label="Next business units"><i class="pi pi-chevron-right"></i></button>
+    </div>
+
+    <div class="dots"><span *ngFor="let p of productCategories; let i = index" [class.active]="i === productSlide"></span></div>
+  </section>
+
+  <section *ngIf="!isAdminPage && showProductListing && currentBusinessUnit as unit" class="wax-page">
+    <div class="wax-header">
+      <div class="wax-title-wrap">
+        <img class="wax-unit-icon" [src]="unit.image" [alt]="unit.title" />
+        <h1>{{unit.title}}</h1>
+        <span>-</span>
+        <p>{{unit.subtitle}}</p>
+      </div>
+    </div>
+
+    <div class="wax-layout">
+      <aside class="filters-panel">
+        <div class="filter-box business-filter-box">
+          <h3>Business Units</h3>
+          <button type="button" *ngFor="let business of productBusinessUnits" [class.selected]="currentView === business.id" (click)="setProductBusinessUnit(business.id)">
+            <span>{{business.title}}</span><b>{{business.count}}</b>
+          </button>
+        </div>
+        <div class="filter-box">
+          <h3>Filter</h3>
+          <button type="button" *ngFor="let c of productCategoryFilters" [class.selected]="selectedWaxCategory === c.name" (click)="setProductCategory(c.name)">
+            <span>{{c.name}}</span><b>{{c.count}}</b>
+          </button>
+        </div>
+
+        <div class="bulk-box">
+          <img [src]="unit.image" alt="Bulk orders" />
+          <div>
+            <h3>Bulk Orders</h3>
+            <p>Get special pricing for bulk orders and distributorship.</p>
+            <a [href]="openWhatsApp('Bulk Wax Polish Order')" target="_blank">Contact Us -></a>
+          </div>
+        </div>
+      </aside>
+
+      <div class="wax-products-area">
+        <div class="showing-row">+ Showing <b>{{filteredWaxProducts.length}}</b> products</div>
+        <div class="wax-grid wax-swipe-grid">
+          <article class="wax-card flippable" *ngFor="let product of pagedWaxProducts" [class.flipped]="flippedProductById[product.id]">
+            <div class="wax-card-inner">
+              <div class="wax-card-face wax-card-front">
+                <div class="wax-card-titlebar">
+                  <h2>{{product.title}}</h2>
+                  <div>
+                    <button class="card-flip-btn" type="button" title="Open details" aria-label="Open details" (click)="openProductDetails(product)"><i class="pi pi-expand"></i></button>
+                    <button class="card-flip-btn" type="button" title="View description" aria-label="View description" (click)="toggleProductFlip(product)"><i class="pi pi-sync"></i></button>
+                    <button class="heart" type="button" title="Favorite" aria-label="Favorite">&#9825;</button>
+                  </div>
+                </div>
+                <div class="wax-img"><img [src]="productDisplayImage(product)" [alt]="product.title" /></div>
+                <small>{{product.category}}</small>
+                <p class="product-desc">{{product.shortDescription || product.description}}</p>
+                <div class="product-package-scroll-shell card-package-shell" *ngIf="product.packagePrices?.length">
+                  <div class="product-package-picker" #cardPackages>
+                    <div class="product-package-row" *ngFor="let item of product.packagePrices" [class.selected]="selectedPackage(product)?.packageSize === item.packageSize" (click)="setSelectedPackage(product, item)">
+                      <span>{{formatPriceInr(item.price)}} / {{item.packageSize}}</span>
+                      <div class="package-qty-controls">
+                        <button type="button" (click)="$event.stopPropagation(); changePackageQty(product, item, -1)">-</button>
+                        <b>{{packageQty(product, item)}}</b>
+                        <button type="button" (click)="$event.stopPropagation(); changePackageQty(product, item, 1)">+</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <strong *ngIf="!product.packagePrices?.length">{{productDisplayPrice(product)}}</strong>
+                <ul>
+                  <li *ngFor="let f of product.features"><span>&#10003;</span>{{f}}</li>
+                </ul>
+                <div class="wax-actions">
+                  <button type="button" class="wax-view-btn cart-summary-btn" title="View Cart" aria-label="View Cart" (click)="setView('cart')">
+                    <i class="pi pi-shopping-cart"></i><span>{{productCartQty(product)}} | {{formatInrAmount(productCartTotal(product))}}</span>
+                  </button>
+                </div>
+              </div>
+              <div class="wax-card-face wax-card-back">
+                <button class="card-flip-btn" type="button" title="Back to product" aria-label="Back to product" (click)="toggleProductFlip(product)"><i class="pi pi-sync"></i></button>
+                <h2>{{product.title}}</h2>
+                <small>Product Description</small>
+                <p>{{product.description}}</p>
+              </div>
             </div>
+          </article>
+        </div>
+        <div class="pagination">
+          <button type="button" [disabled]="productPage === 1" (click)="setProductPage(productPage - 1)"><</button>
+          <button type="button" *ngFor="let page of productPages" [class.active]="page === productPage" (click)="setProductPage(page)">{{page}}</button>
+          <button type="button" [disabled]="productPage === totalProductPages" (click)="setProductPage(productPage + 1)">></button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            <!-- Our Mission -->
-            <div class="mb-3">
-              <h3 class="text-xs font-black uppercase tracking-widest text-[var(--c2)] mb-1">{{t[lang].missionTitle}}</h3>
-              <p class="text-[var(--muted)] leading-6 text-sm italic">{{t[lang].missionText}}</p>
+  <div class="product-detail-backdrop" *ngIf="!isAdminPage && productDetailProduct as detail" (click)="closeProductDetails()">
+    <div class="product-detail-modal" (click)="$event.stopPropagation()">
+      <div class="product-detail-modal-title">
+        <h2>{{detail.title}} - {{detail.category}}</h2>
+        <button type="button" class="product-detail-close" title="Close" aria-label="Close" (click)="closeProductDetails()">x</button>
+      </div>
+      <div class="product-detail-media">
+        <img [src]="productDisplayImage(detail)" [alt]="detail.title" />
+      </div>
+      <div class="product-detail-info">
+        <div class="product-detail-title">
+          <div>
+            <h2>{{detail.title}}</h2>
+            <small>{{detail.category}}</small>
+          </div>
+        </div>
+        <p class="product-desc">{{detail.shortDescription || detail.description}}</p>
+        <div class="product-detail-description">{{detail.description}}</div>
+        <div class="product-package-scroll-shell detail-packages-shell" *ngIf="detail.packagePrices?.length">
+          <div class="product-detail-packages" #detailPackages>
+            <div class="product-package-row" *ngFor="let item of detail.packagePrices" [class.selected]="selectedPackage(detail)?.packageSize === item.packageSize" (click)="setSelectedPackage(detail, item)">
+              <span>{{formatPriceInr(item.price)}} / {{item.packageSize}}</span>
+              <div class="package-qty-controls">
+                <button type="button" (click)="$event.stopPropagation(); changePackageQty(detail, item, -1)">-</button>
+                <b>{{packageQty(detail, item)}}</b>
+                <button type="button" (click)="$event.stopPropagation(); changePackageQty(detail, item, 1)">+</button>
+              </div>
             </div>
+          </div>
+        </div>
+        <ul>
+          <li *ngFor="let f of detail.features"><span>&#10003;</span>{{f}}</li>
+        </ul>
+        <div class="product-detail-actions">
+          <strong class="product-detail-total">{{formatInrAmount(productCartTotal(detail))}}</strong>
+          <button type="button" class="wax-view-btn" (click)="setView('cart'); closeProductDetails()"><i class="pi pi-shopping-cart"></i> View Cart ({{productCartQty(detail)}})</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            <!-- All 4 taglines visible -->
-            <div class="flex flex-col gap-2.5 mb-3">
-              <p *ngFor="let tag of t[lang].taglines"
-                 class="text-sm font-bold text-[var(--c2)] flex items-start gap-3 leading-6">
-                <span class="text-base text-[var(--c3)] shrink-0 mt-0.5">✦</span>{{tag}}
-              </p>
+  <section *ngIf="!isAdminPage && currentBusinessUnit && !showProductListing" class="coming-page">
+    <div class="coming-card">
+      <h1>{{currentProductCategory?.title}}</h1>
+      <p>{{currentProductCategory?.subtitle}}</p>
+      <span>Coming Soon</span>
+      <button type="button" class="gold-btn" (click)="setView('products')">Back to Business Unit</button>
+    </div>
+  </section>
+
+  <section *ngIf="!isAdminPage && currentView === 'contact'" class="contact-full-page">
+    <div class="contact-left-panel">
+      <span class="eyebrow">Contact Us</span>
+      <div class="contact-info-list">
+        <div><b>Address</b><p>Crescent Commercials.<br>5/11, Govindappa Naicken 3rd Cross St,<br>Govindappa Nagar, Maduravoyal,<br>Chennai, Tamil Nadu 600095</p></div>
+        <div><b>Phone</b><p>+91 90921 54605<br>+91 95978 18815</p></div>
+        <div><b>Email</b><p>cccproducts2017&#64;gmail.com</p></div>
+      </div>
+    </div>
+    <div class="contact-editor-panel">
+      <h2>Contact Us</h2>
+      <div class="contact-form-grid">
+        <label aria-label="Full Name"><input type="text" placeholder="Full Name" [(ngModel)]="contactName" /></label>
+        <label aria-label="Email"><input type="email" placeholder="Email" [(ngModel)]="contactEmail" /></label>
+        <label aria-label="Mobile Number"><div class="phone-input"><span>+91</span><input type="tel" placeholder="Mobile Number" [(ngModel)]="contactMobile" /></div></label>
+      </div>
+      <div class="message-action-row">
+        <label class="message-editor-label" aria-label="Message">
+          <div class="message-toolbar">
+            <select [(ngModel)]="contactFontSize" aria-label="Font size"><option>14px</option><option>16px</option><option>18px</option><option>20px</option></select>
+            <input type="color" [(ngModel)]="contactTextColor" aria-label="Text color" />
+            <button type="button" [class.active]="contactBold" (click)="contactBold = !contactBold">B</button>
+            <button type="button" [class.active]="contactItalic" (click)="contactItalic = !contactItalic">I</button>
+          </div>
+          <textarea placeholder="Message" [(ngModel)]="contactMessage" [style.fontSize]="contactFontSize" [style.color]="contactTextColor" [style.fontWeight]="contactBold ? '700' : '400'" [style.fontStyle]="contactItalic ? 'italic' : 'normal'"></textarea>
+        </label>
+        <div class="contact-form-actions">
+          <a [href]="contactMailUrl()" class="gold-btn">Send <i class="pi pi-envelope"></i></a>
+          <a [href]="contactWhatsAppUrl()" target="_blank" class="whatsapp-send-btn">Send <i class="pi pi-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="!isAdminPage && currentView === 'cart'" class="cart-order-page">
+    <div class="cart-order-panel">
+      <div class="cart-order-head">
+        <h1>Cart Order</h1>
+        <button type="button" class="cart-clear-icon" *ngIf="cartItems.length" title="Delete Cart Order" aria-label="Delete Cart Order" (click)="clearCart()"><i class="pi pi-trash"></i><span>Delete Cart Order</span></button>
+      </div>
+      <div class="cart-empty" *ngIf="!cartItems.length">Your cart is empty.</div>
+      <div class="cart-list" *ngIf="cartItems.length">
+        <section class="cart-business-group" *ngFor="let group of cartBusinessGroups">
+          <div class="cart-group-head">
+            <h2>{{group.title}}</h2>
+            <span>{{formatInrAmount(group.total)}} | {{group.qty}} Items</span>
+          </div>
+          <div class="cart-row" *ngFor="let item of group.items">
+            <img [src]="item.image" [alt]="item.title" />
+            <div class="cart-item-copy"><b>{{item.title}}</b><small>{{item.packageSize || item.category}}</small></div>
+            <div class="cart-qty-controls">
+              <button type="button" (click)="changeCartItemQty(item, -1)">-</button>
+              <b>{{item.qty}}</b>
+              <button type="button" (click)="changeCartItemQty(item, 1)">+</button>
             </div>
+            <span class="cart-line-total">{{formatInrAmount(toPrice(item.price) * item.qty)}}</span>
+            <button class="cart-remove-icon" type="button" title="Remove" aria-label="Remove" (click)="removeFromCart(item.title)"><i class="pi pi-times"></i></button>
+          </div>
+        </section>
+      </div>
+    </div>
 
-            <!-- Action buttons — pinned to bottom on desktop, normal flow on mobile -->
-            <div class="md:mt-auto flex items-center justify-between gap-3 pt-2">
-              <button type="button" title="Explore our products" (click)="setView('wax-polish')"
-                      class="btn-gloss flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-sm">
-                <i class="pi pi-box text-sm"></i>
-                {{t[lang].explore}}
-                <i class="pi pi-angle-right text-xs"></i>
+    <aside class="cart-summary-panel">
+      <h2>Summary</h2>
+      <div class="cart-summary-list" *ngIf="cartItems.length">
+        <div class="cart-summary-group" *ngFor="let group of cartBusinessGroups">
+          <div><b>{{group.title}}</b><span>{{formatInrAmount(group.total)}} | {{group.qty}} Items</span></div>
+          <strong>{{formatInrAmount(group.total)}}</strong>
+        </div>
+      </div>
+      <div class="cart-overall-summary" *ngIf="cartItems.length">
+        <span>Overall Summary</span>
+        <b>{{cartCount}} Items</b>
+        <strong>{{formatInrAmount(cartTotal)}}</strong>
+      </div>
+      <div class="cart-empty" *ngIf="!cartItems.length">Add products to prepare an order summary.</div>
+      <div class="cart-summary-actions">
+        <a [href]="cartEmailUrl()" class="gold-btn icon-only" title="Send Email" aria-label="Send Email"><i class="pi pi-envelope"></i></a>
+        <a [href]="cartWhatsAppUrl()" target="_blank" class="whatsapp-send-btn icon-only" title="Send WhatsApp" aria-label="Send WhatsApp"><i class="pi pi-whatsapp"></i></a>
+      </div>
+    </aside>
+  </section>
+
+  <section *ngIf="isAdminPage" class="admin-page">
+    <div class="admin-topbar">
+      <div class="admin-brand">
+        <img src="assets/Logo/CCLogo.png" alt="Crescent Commercials" />
+        <div>
+          <strong>Crescent Commercials</strong>
+          <span>Manufacturing - Trading - Authentic Indian Products</span>
+        </div>
+      </div>
+      <div class="admin-view-pill"><i class="pi pi-info-circle"></i> Admin View</div>
+    </div>
+    <div class="admin-shell admin-shell-redesign">
+      <aside class="admin-sidebar admin-tree">
+        <div>
+          <span class="eyebrow">Crescent Admin</span>
+          <h1>Content Manager</h1>
+        </div>
+        <div class="admin-tree-menu">
+          <button type="button" [class.active]="adminTab === 'home'" (click)="setAdminTab('home')"><i class="pi pi-home"></i><span>Home Content</span></button>
+          <div class="admin-tree-node" [class.active]="adminTab === 'business'">
+            <button type="button" [class.active]="adminTab === 'business'" (click)="toggleBusinessTree()"><i class="pi" [ngClass]="businessTreeExpanded ? 'pi-angle-down' : 'pi-angle-right'"></i><span>Business Unit</span></button>
+            <button type="button" class="admin-node-add" title="Add Business Unit" aria-label="Add Business Unit" (click)="addBusinessUnit()"><i class="pi pi-plus"></i></button>
+          </div>
+          <div class="admin-tree-list" *ngIf="adminTab === 'business' && businessTreeExpanded">
+            <div class="admin-tree-branch" *ngFor="let unit of productCategories; let i = index">
+              <button type="button" [class.active]="selectedBusinessUnitIndex === i && adminSelection === 'business'" (click)="selectBusinessUnit(i)">
+                <i class="pi" [ngClass]="selectedBusinessUnitIndex === i && productsTreeExpanded ? 'pi-angle-down' : 'pi-angle-right'"></i>
+                <span>{{unit.icon}}</span>
+                <b>{{unit.title}}</b>
               </button>
-              <div class="flex items-center gap-2">
-                <a [href]="whatsappUrl()" target="_blank" [title]="t[lang].whatsapp"
-                   class="btn-gloss w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-                  <i class="pi pi-whatsapp text-base"></i>
-                </a>
-                <button type="button" title="Contact via Email" (click)="setView('contact')"
-                        class="btn-gloss w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-                  <i class="pi pi-envelope text-base"></i>
+              <div class="admin-product-branch" *ngIf="selectedBusinessUnitIndex === i && productsTreeExpanded">
+                <button type="button" *ngFor="let product of selectedBusinessUnitProducts" [class.active]="selectedProduct === product && adminSelection === 'product'" (click)="selectProduct(product)">
+                  <i class="pi pi-angle-right"></i>
+                  <span>{{product.title}}</span>
                 </button>
               </div>
             </div>
           </div>
-          <!-- Product slideshow -->
-          <div class="homeslideshow relative flex items-center justify-center overflow-hidden rounded-xl">
-            <img title="Golden Horse Product" *ngFor="let img of homeSlideImages; let i = index"
-                 [src]="img" [alt]="'Golden Horse Product ' + (i + 1)"
-                 class="home-slide-img absolute inset-0 w-full h-full object-contain object-center"
-                 [class.home-slide-active]="i === homeSlideIndex" />
-          </div>
+          <button type="button" [class.active]="adminTab === 'bases'" (click)="setAdminTab('bases')"><i class="pi pi-database"></i><span>Bases</span></button>
+          <button type="button" [class.active]="adminTab === 'baseTypes'" (click)="setAdminTab('baseTypes')"><i class="pi pi-list"></i><span>Base Types</span></button>
+          <button type="button" [class.active]="adminTab === 'packs'" (click)="setAdminTab('packs')"><i class="pi pi-box"></i><span>Pack</span></button>
         </div>
 
-        <div class="border-t shrink-0 divider-border"></div>
-
-        <!-- Business Lines -->
-        <div class="shrink-0 py-3 md:py-4">
-          <h2 class="text-lg md:text-2xl font-black mb-2 md:mb-3">{{t[lang].businessTitle}}</h2>
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3">
-            <div *ngFor="let b of businessLines"
-                 class="rounded-2xl p-3 md:p-4 glass flex flex-col gap-1.5 md:gap-2 cursor-pointer hover:bg-white/10 transition-all"
-                 [class.opacity-60]="b.comingSoon"
-                 (click)="setView(b.id)">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-2xl md:text-3xl leading-none">{{b.icon}}</span>
-                <h3 class="font-black text-xs md:text-base leading-tight">{{b.name[lang]}}</h3>
-                <p-tag *ngIf="b.comingSoon" [value]="t[lang].comingSoon" severity="warning"></p-tag>
-              </div>
-              <p class="text-[var(--muted)] text-xs leading-5 hidden md:block">{{b.desc[lang]}}</p>
-            </div>
-          </div>
-        </div>
-
+      </aside>
+      <div class="admin-save-status" *ngIf="adminSaveStatus" [class.busy]="adminSaving" [class.fading]="adminStatusFading">
+        <i class="pi" [ngClass]="adminSaving ? 'pi-spin pi-spinner' : 'pi-check-circle'"></i>
+        <span>{{adminSaveStatus}}</span>
+        <button type="button" aria-label="Close message" title="Close message" (click)="closeAdminStatus()">x</button>
       </div>
 
-      <!-- ── WAX POLISH (carousel) ── -->
-      <div *ngIf="currentView === 'wax-polish'" class="flex-1 min-h-0 flex flex-col overflow-hidden px-5 md:px-8 py-4">
-
-        <div class="mb-3 shrink-0">
-          <div class="flex items-center justify-between gap-3">
-            <div class="inline-flex px-3 py-1 rounded-full btn-gloss text-sm font-bold shrink-0">{{t[lang].waxPolishMenu}}</div>
-            <div class="flex items-center gap-2">
-              <button type="button" title="Add to cart"
-                      (click)="addToCart(waxCarouselItems[waxCarouselIndex].title.en, waxCarouselItems[waxCarouselIndex].category.en, waxCarouselItems[waxCarouselIndex].image)"
-                      class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold btn-gloss">
-                <i class="pi pi-shopping-cart text-xs"></i>
-                <span *ngIf="!isInCart(waxCarouselItems[waxCarouselIndex].title.en)">{{t[lang].addToCart}}</span>
-                <span *ngIf="isInCart(waxCarouselItems[waxCarouselIndex].title.en)">
-                  {{t[lang].inCart}} ({{cartQty(waxCarouselItems[waxCarouselIndex].title.en)}}) +
-                </span>
-              </button>
-              <a [href]="whatsappProductUrl(waxCarouselItems[waxCarouselIndex].title.en)"
-                 target="_blank" title="Enquire on WhatsApp"
-                 class="btn-gloss rounded-full w-8 h-8 flex items-center justify-center shrink-0">
-                <i class="pi pi-whatsapp text-sm"></i>
-              </a>
-            </div>
-          </div>
-          <h2 class="text-2xl md:text-3xl font-black mt-2">{{t[lang].waxPolishPageTitle}}</h2>
+      <div class="admin-panel" *ngIf="adminTab === 'home'">
+        <div class="admin-panel-head">
+          <div><h2>Home Page Content</h2></div>
+          <button type="button" class="admin-icon-action" title="Save Home Content" aria-label="Save Home Content" (click)="saveHomeContent()"><i class="pi pi-save"></i></button>
         </div>
-
-        <div class="glass relative carousel-slide flex-1 min-h-0 overflow-hidden grid md:grid-cols-2"
-             (touchstart)="onTouchStart($event)"
-             (touchend)="onTouchEnd($event, 'wax')">
-
-          <!-- LEFT: scrollable text -->
-          <div class="p-5 md:p-7 flex flex-col overflow-y-auto pb-14">
-            <div class="flex items-center justify-between mb-4 shrink-0">
-              <span class="text-xs font-black uppercase tracking-widest text-[var(--muted)]">
-                {{waxCarouselItems[waxCarouselIndex].category[lang]}}
-              </span>
-              <span class="text-sm font-semibold italic opacity-80">{{waxCarouselItems[waxCarouselIndex].tag[lang]}}</span>
+        <div class="admin-grid two">
+          <label>Icon / Eyebrow<input [(ngModel)]="homeContent.eyebrow" (ngModelChange)="saveAdminContent()" /></label>
+          <label>Displayed Image URL
+            <div class="admin-image-url-field">
+              <input [(ngModel)]="homeContent.image" (ngModelChange)="saveAdminContent()" />
+              <button type="button" class="admin-icon-action small" title="Preview Image" aria-label="Preview Image" (click)="openImagePreview(homeContent.image)"><i class="pi pi-eye"></i></button>
+              <label class="admin-icon-action small package-select-image" title="Select Image" aria-label="Select Image">
+                <i class="pi pi-image"></i>
+                <input type="file" accept="image/*" (change)="handleImageUpload($event, homeContent)" />
+              </label>
             </div>
-            <h3 class="text-xl md:text-2xl font-black mb-2 shrink-0">
-              {{waxCarouselItems[waxCarouselIndex].title[lang]}}
-            </h3>
-            <p class="text-[var(--muted)] leading-6 mb-4 text-sm shrink-0">
-              {{waxCarouselItems[waxCarouselIndex].description[lang]}}
-            </p>
-            <div *ngIf="waxCarouselItems[waxCarouselIndex].idealFor[lang].length" class="mb-4 shrink-0">
-              <span class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-2">{{t[lang].idealFor}}</span>
-              <ul class="space-y-1.5">
-                <li *ngFor="let item of waxCarouselItems[waxCarouselIndex].idealFor[lang]"
-                    class="flex gap-2 items-start text-xs text-[var(--muted)]">
-                  <span class="text-[var(--c2)] shrink-0">✓</span> {{item}}
-                </li>
-              </ul>
-            </div>
-            <div *ngIf="waxCarouselItems[waxCarouselIndex].detailedBenefits[lang].length" class="mb-4 shrink-0">
-              <span class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-2">{{t[lang].keyFeatures}}</span>
-              <ul class="space-y-1.5">
-                <li *ngFor="let b of waxCarouselItems[waxCarouselIndex].detailedBenefits[lang]"
-                    class="flex gap-2 items-start text-xs text-[var(--muted)]">
-                  <span class="text-[var(--c3)] shrink-0">✦</span>
-                  <span><span class="font-black">{{b.title}}:</span> {{b.desc}}</span>
-                </li>
-              </ul>
-            </div>
-            <div *ngIf="waxCarouselItems[waxCarouselIndex].simpleBenefits[lang].length" class="mb-3 shrink-0">
-              <span class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-2">{{t[lang].idealFor}}</span>
-              <ul class="space-y-1.5">
-                <li *ngFor="let b of waxCarouselItems[waxCarouselIndex].simpleBenefits[lang]"
-                    class="flex gap-2 items-start text-xs text-[var(--muted)]">
-                  <span class="text-[var(--c2)] shrink-0">✓</span> {{b}}
-                </li>
-              </ul>
-            </div>
-            <div *ngIf="waxCarouselItems[waxCarouselIndex].keyFeatures[lang].length" class="shrink-0">
-              <span class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-2">{{t[lang].keyFeatures}}</span>
-              <ul class="space-y-1.5">
-                <li *ngFor="let f of waxCarouselItems[waxCarouselIndex].keyFeatures[lang]"
-                    class="flex gap-2 items-start text-xs text-[var(--muted)]">
-                  <span class="text-[var(--c3)] shrink-0">✦</span> {{f}}
-                </li>
-              </ul>
+          </label>
+          <label>Who We Are<input [(ngModel)]="homeContent.title" (ngModelChange)="saveAdminContent()" /></label>
+          <label class="wide">Who We Are Content<textarea [(ngModel)]="homeContent.intro" (ngModelChange)="saveAdminContent()"></textarea></label>
+          <label>Mission Heading<input [(ngModel)]="homeContent.missionTitle" (ngModelChange)="saveAdminContent()" /></label>
+          <label class="wide">Mission Content<textarea [(ngModel)]="homeContent.mission" (ngModelChange)="saveAdminContent()"></textarea></label>
+        </div>
+        <div class="admin-repeat">
+          <div class="admin-repeat-head"><h3>Additional Topics</h3><button type="button" class="admin-icon-action" title="Add Topic" aria-label="Add Topic" (click)="addHomeTopic()"><i class="pi pi-plus"></i></button></div>
+          <div class="admin-row" *ngFor="let topic of homeContent.topics; let i = index">
+            <div class="admin-url-input-wrap admin-inline-delete-field">
+              <input [(ngModel)]="homeContent.topics[i]" (ngModelChange)="saveAdminContent()" />
+              <button type="button" class="admin-field-clear glossy-clear" title="Delete Topic" aria-label="Delete Topic" (click)="removeHomeTopic(i)">x</button>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- RIGHT: image -->
-          <div class="h-48 md:h-full overflow-hidden flex items-center justify-center self-center md:self-auto">
-            <img title="Product image" *ngIf="waxCarouselItems[waxCarouselIndex].image"
-                 [title]="waxCarouselItems[waxCarouselIndex].title[lang]"
-                 [alt]="waxCarouselItems[waxCarouselIndex].title[lang]"
-                 [src]="waxCarouselItems[waxCarouselIndex].image"
-                 class="w-full h-full object-contain" />
-            <div *ngIf="!waxCarouselItems[waxCarouselIndex].image"
-                 class="carousel-brand-panel w-full h-full flex flex-col items-center justify-center gap-5 p-8 text-center
-                        bg-gradient-to-br from-amber-950/70 to-yellow-800/30">
-              <span class="text-8xl">🧴</span>
-              <div>
-                <p class="font-black text-xl">Creamora</p>
-                <p class="text-[var(--muted)] text-sm mt-1">Premium Leather</p>
-                <div class="mt-3">
-                  <p-tag [value]="waxCarouselItems[waxCarouselIndex].tag[lang]" severity="info"></p-tag>
+      <div class="admin-panel business-admin" *ngIf="adminTab === 'business' && adminSelection === 'business' && selectedBusinessUnit as unit">
+        <div class="admin-two-pane">
+          <div class="admin-edit-actions">
+            <div class="admin-edit-left">
+              <div><span class="eyebrow">Business Unit</span><h2>{{unit.title}}</h2></div>
+              <button type="button" class="admin-icon-action" title="Save Business Unit" aria-label="Save Business Unit" (click)="saveBusinessUnitToDb()"><i class="pi pi-save"></i></button>
+              <button type="button" class="admin-icon-action danger" title="Delete Business Unit" aria-label="Delete Business Unit" (click)="deleteBusinessUnit(selectedBusinessUnitIndex)"><i class="pi pi-trash"></i></button>
+            </div>
+            <button type="button" class="admin-icon-action admin-text-action" title="Add Product" aria-label="Add Product" (click)="addProduct()"><i class="pi pi-plus"></i><span>Product</span></button>
+          </div>
+          <div class="admin-card-block">
+            <div class="admin-card-title-row">
+              <h3>Business Unit Main Fields</h3>
+              <label class="admin-check admin-title-check"><input type="checkbox" [(ngModel)]="unit.soon" (ngModelChange)="saveAdminContent()" /> Coming Soon</label>
+            </div>
+            <div class="admin-grid two compact">
+              <label>Business Unit Name<input [(ngModel)]="unit.title" (ngModelChange)="saveAdminContent()" /></label>
+              <label>Icon<input [(ngModel)]="unit.icon" (ngModelChange)="saveAdminContent()" /></label>
+              <label>Image URL
+                <div class="admin-image-url-field">
+                  <input [(ngModel)]="unit.image" (ngModelChange)="saveAdminContent()" />
+                  <button type="button" class="admin-icon-action small" title="Preview Image" aria-label="Preview Image" (click)="openImagePreview(unit.image)"><i class="pi pi-eye"></i></button>
+                  <label class="admin-icon-action small package-select-image" title="Select Image" aria-label="Select Image">
+                    <i class="pi pi-image"></i>
+                    <input type="file" accept="image/*" (change)="handleImageUpload($event, unit)" />
+                  </label>
+                </div>
+              </label>
+              <label>Accent Color<input type="color" [(ngModel)]="unit.color" (ngModelChange)="saveAdminContent()" /></label>
+              <label class="wide">Description<textarea [(ngModel)]="unit.subtitle" (ngModelChange)="saveAdminContent()"></textarea></label>
+              <label>360 Degree Image URL
+                <div class="admin-image-url-field clearable">
+                  <div class="admin-url-input-wrap">
+                    <input [(ngModel)]="unit.image360" (ngModelChange)="saveAdminContent()" />
+                    <button type="button" class="admin-field-clear" title="Clear 360 Image URL" aria-label="Clear 360 Image URL" (click)="unit.image360 = ''; saveAdminContent()">x</button>
+                  </div>
+                  <button type="button" class="admin-icon-action small" title="Preview 360 Image" aria-label="Preview 360 Image" (click)="openImagePreview(unit.image360)"><i class="pi pi-eye"></i></button>
+                  <label class="admin-icon-action small package-select-image" title="Select 360 Image" aria-label="Select 360 Image">
+                    <i class="pi pi-image"></i>
+                    <input type="file" accept="image/*" (change)="handleImageUpload($event, unit, 'image360')" />
+                  </label>
+                </div>
+              </label>
+            </div>
+
+            <div class="admin-master-checks admin-support-groups">
+              <div class="admin-support-group">
+                <div class="admin-group-head"><h4>Supported Base</h4><button type="button" class="admin-gloss-action support-add-icon" title="Add Base" aria-label="Add Base" (click)="openSupportPopup('supportedBases')"><i class="pi pi-plus"></i></button></div>
+                <div class="admin-search-row"><div class="admin-search-field"><input placeholder="Search" [(ngModel)]="supportSearch.supportedBases" /><button type="button" (click)="clearSupportSearch('supportedBases')">x</button></div></div>
+                <div class="admin-scroll-list">
+                  <button type="button" class="admin-value-pill" *ngFor="let item of filteredSupportValues('supportedBases')"><span>{{item}}</span><i class="pi pi-times" (click)="removeUnitMasterValue(unit, 'supportedBases', item)"></i></button>
+                </div>
+              </div>
+              <div class="admin-support-group">
+                <div class="admin-group-head"><h4>Supported Types</h4><button type="button" class="admin-gloss-action support-add-icon" title="Add Type" aria-label="Add Type" (click)="openSupportPopup('supportedTypes')"><i class="pi pi-plus"></i></button></div>
+                <div class="admin-search-row"><div class="admin-search-field"><input placeholder="Search" [(ngModel)]="supportSearch.supportedTypes" /><button type="button" (click)="clearSupportSearch('supportedTypes')">x</button></div></div>
+                <div class="admin-scroll-list">
+                  <button type="button" class="admin-value-pill" *ngFor="let item of filteredSupportValues('supportedTypes')"><span>{{item}}</span><i class="pi pi-times" (click)="removeUnitMasterValue(unit, 'supportedTypes', item)"></i></button>
+                </div>
+              </div>
+              <div class="admin-support-group">
+                <div class="admin-group-head"><h4>Supported Pack</h4><button type="button" class="admin-gloss-action support-add-icon" title="Add Pack" aria-label="Add Pack" (click)="openSupportPopup('supportedPacks')"><i class="pi pi-plus"></i></button></div>
+                <div class="admin-search-row"><div class="admin-search-field"><input placeholder="Search" [(ngModel)]="supportSearch.supportedPacks" /><button type="button" (click)="clearSupportSearch('supportedPacks')">x</button></div></div>
+                <div class="admin-scroll-list">
+                  <button type="button" class="admin-value-pill" *ngFor="let item of filteredSupportValues('supportedPacks')"><span>{{item}}</span><i class="pi pi-times" (click)="removeUnitMasterValue(unit, 'supportedPacks', item)"></i></button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Integrated nav: ← dots → -->
-          <div class="absolute bottom-0 left-0 right-0 flex items-center gap-2 px-3 py-2 bg-black/15">
-            <button type="button" (click)="prevProduct('wax')" title="Previous product"
-                    class="btn-gloss rounded-full w-9 h-9 flex items-center justify-center shrink-0">
-              <i class="pi pi-chevron-left text-sm"></i>
-            </button>
-            <div class="flex gap-1.5 items-center flex-1 justify-center overflow-hidden">
-              <button *ngFor="let p of waxCarouselItems; let i = index" title="Go to product"
-                      type="button" (click)="waxCarouselIndex = i"
-                      class="rounded-full h-2 transition-all duration-300 shrink-0"
-                      [class.w-5]="i === waxCarouselIndex" [class.btn-gloss]="i === waxCarouselIndex"
-                      [class.w-2]="i !== waxCarouselIndex" [class.dot-inactive]="i !== waxCarouselIndex">
-              </button>
-            </div>
-            <button type="button" (click)="nextProduct('wax')" title="Next product"
-                    class="btn-gloss rounded-full w-9 h-9 flex items-center justify-center shrink-0">
-              <i class="pi pi-chevron-right text-sm"></i>
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ── FIRE CRACKERS (coming soon) ── -->
-      <div *ngIf="currentView === 'fire-crackers'" class="flex-1 min-h-0 overflow-y-auto px-5 md:px-8 py-10">
-        <div class="glass rounded-none p-10 md:p-14 text-center max-w-2xl mx-auto">
-          <div class="text-7xl mb-5">🎆</div>
-          <h2 class="text-4xl font-black mb-3">Golden Horse Fire Crackers</h2>
-          <p class="text-[var(--muted)] text-lg mb-8 max-w-lg mx-auto leading-7">
-            Our Golden Horse Fire Crackers collection is coming soon! Festival sparklers, rockets, flower pots, aerial shots and gift boxes — crafted for every celebration.
-          </p>
-          <div class="inline-flex px-6 py-3 rounded-full btn-gloss font-extrabold text-lg mb-6">{{t[lang].comingSoon}}</div>
-          <div class="mt-6">
-            <p class="text-[var(--muted)] text-sm mb-3">Get notified when we launch — contact us on WhatsApp</p>
-            <a [href]="whatsappUrl()" target="_blank" title="Notify me"
-               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl glass font-bold text-sm hover:bg-white/10 transition-all cursor-pointer">
-              <i class="pi pi-whatsapp text-base text-[var(--c2)]"></i> Notify Me
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── SPICES (coming soon) ── -->
-      <div *ngIf="currentView === 'spices'" class="flex-1 min-h-0 overflow-y-auto px-5 md:px-8 py-10">
-        <div class="glass rounded-3xl p-12 text-center">
-          <div class="text-7xl mb-5">🌶️</div>
-          <h2 class="text-4xl font-black mb-2">Spices &amp; Masala</h2>
-          <p class="text-[var(--muted)] text-lg mb-6 max-w-lg mx-auto">Authentic Indian spice blends and masala powders. Bringing the rich flavours of India to every kitchen.</p>
-          <div class="inline-flex px-5 py-2.5 rounded-full btn-gloss font-extrabold text-lg">{{t[lang].comingSoon}}</div>
-        </div>
-      </div>
-
-      <!-- ── CLOTHING (coming soon) ── -->
-      <div *ngIf="currentView === 'clothing'" class="flex-1 min-h-0 overflow-y-auto px-5 md:px-8 py-10">
-        <div class="glass rounded-3xl p-12 text-center">
-          <div class="text-7xl mb-5">🧥</div>
-          <h2 class="text-4xl font-black mb-2">Clothing</h2>
-          <p class="text-[var(--muted)] text-lg mb-6 max-w-lg mx-auto">Quality Indian clothing and everyday apparel. Expanding Crescent Commercials to serve your everyday fashion needs.</p>
-          <div class="inline-flex px-5 py-2.5 rounded-full btn-gloss font-extrabold text-lg">{{t[lang].comingSoon}}</div>
-        </div>
-      </div>
-
-      <!-- ── CONTACT ── -->
-      <div *ngIf="currentView === 'contact'" class="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
-
-        <!-- LEFT: Contact details -->
-        <div class="md:w-64 shrink-0 flex flex-col gap-0 px-5 md:px-6 py-5 overflow-y-auto border-b md:border-b-0 md:border-r divider-border">
-          <h2 class="text-base font-black mb-4">Contact Details</h2>
-
-          <div class="pb-4">
-            <p class="text-xs font-black uppercase tracking-widest text-[var(--muted)] mb-2 flex items-center gap-1.5">
-              <i class="pi pi-map-marker"></i> Address
-            </p>
-            <p class="text-sm leading-6">
-              5/11, Govindappa Naicken<br>
-              3rd Cross St,<br>
-              Govindappa Nagar,<br>
-              Maduravoyal, Chennai,<br>
-              Tamil Nadu 600095
-            </p>
-          </div>
-
-          <div class="contact-section-divider"></div>
-
-          <div class="py-4">
-            <p class="text-xs font-black uppercase tracking-widest text-[var(--muted)] mb-2 flex items-center gap-1.5">
-              <i class="pi pi-phone"></i> Call Us
-            </p>
-            <a href="tel:+919092154605" class="block text-sm font-semibold text-[var(--c2)] hover:underline">+91 90921 54605</a>
-            <a href="tel:+919597818815" class="block text-sm font-semibold text-[var(--c2)] hover:underline mt-0.5">+91 95978 18815</a>
-          </div>
-
-          <div class="contact-section-divider"></div>
-
-          <div class="py-4">
-            <p class="text-xs font-black uppercase tracking-widest text-[var(--muted)] mb-2 flex items-center gap-1.5">
-              <i class="pi pi-whatsapp"></i> WhatsApp Us
-            </p>
-            <a href="https://wa.me/919092154605" target="_blank" rel="noopener noreferrer"
-               class="block text-sm font-semibold text-[var(--c2)] hover:underline">+91 90921 54605</a>
-          </div>
-
-          <div class="contact-section-divider"></div>
-
-          <div class="pt-4">
-            <p class="text-xs font-black uppercase tracking-widest text-[var(--muted)] mb-2 flex items-center gap-1.5">
-              <i class="pi pi-envelope"></i> Mail Us
-            </p>
-            <a href="mailto:cccproducts2017&#64;gmail.com"
-               class="block text-sm font-semibold text-[var(--c2)] hover:underline break-all">
-              cccproducts2017&#64;gmail.com
-            </a>
-          </div>
-        </div>
-
-        <!-- RIGHT: Contact form -->
-        <div class="flex-1 min-h-0 flex flex-col px-5 md:px-6 py-5 overflow-hidden">
-          <h2 class="text-xl md:text-2xl font-black mb-1 shrink-0">{{t[lang].contactTitle}}</h2>
-          <p class="text-[var(--muted)] text-sm mb-4 shrink-0">{{t[lang].contactText}}</p>
-
-          <div class="flex flex-col flex-1 min-h-0 gap-3">
-            <div class="shrink-0">
-              <label class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-1.5">Name</label>
-              <input type="text" class="form-input" placeholder="Your full name"
-                     [value]="contactName" (input)="contactName = $any($event.target).value" />
-            </div>
-            <div class="shrink-0">
-              <label class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-1.5">Email</label>
-              <input type="email" class="form-input" placeholder="your@email.com"
-                     [value]="contactEmail" (input)="contactEmail = $any($event.target).value" />
-            </div>
-            <div class="flex-1 min-h-0 flex flex-col">
-              <label class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-1.5 shrink-0">Message</label>
-              <textarea class="form-input form-textarea resize-none" placeholder="Your message or enquiry..."
-                        [value]="contactMessage" (input)="contactMessage = $any($event.target).value"></textarea>
-            </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <a [href]="contactEmailUrl()" title="Send via Email"
-                 class="glass w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all cursor-pointer shrink-0">
-                <i class="pi pi-send text-base text-[var(--c2)]"></i>
-              </a>
-              <a [href]="contactWhatsappUrl()" target="_blank" title="Send via WhatsApp"
-                 class="btn-gloss w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-                <i class="pi pi-whatsapp text-base"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ── CART ── -->
-      <div *ngIf="currentView === 'cart'" class="flex-1 min-h-0 flex flex-col overflow-y-auto px-5 md:px-8 py-4">
-        <div class="flex items-center justify-between mb-4 shrink-0">
-          <h2 class="text-2xl md:text-3xl font-black">Enquiry Cart</h2>
-          <button *ngIf="cartItems.length" type="button" (click)="clearCart()" title="Clear all items"
-                  class="text-sm text-[var(--muted)] hover:text-[var(--text)] transition-colors font-semibold">
-            Clear All
-          </button>
-        </div>
-
-        <div *ngIf="!cartItems.length" class="flex flex-col items-center justify-center py-16 text-center">
-          <i class="pi pi-shopping-cart text-6xl opacity-20 mb-4"></i>
-          <p class="text-[var(--muted)] text-lg mb-4">Your enquiry cart is empty</p>
-          <button type="button" (click)="setView('wax-polish')" title="Browse products"
-                  class="btn-gloss flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-sm">
-            <i class="pi pi-box text-sm"></i> Browse Products
-          </button>
-        </div>
-
-        <div *ngIf="cartItems.length" class="flex flex-col gap-3">
-
-          <!-- Cart items with qty controls -->
-          <div *ngFor="let item of cartItems" class="glass rounded-none flex gap-3 items-center p-4">
-            <img title="Cart item" [src]="item.image" [alt]="item.title"
-                 class="w-12 h-12 object-contain shrink-0" />
-            <div class="flex-1 min-w-0">
-              <p class="font-black text-sm truncate">{{item.title}}</p>
-              <p class="text-[var(--muted)] text-xs mt-0.5">{{item.category}}</p>
-            </div>
-            <!-- Qty controls -->
-            <div class="flex items-center gap-1 shrink-0">
-              <button type="button" (click)="updateQty(item.title, -1)" title="Decrease"
-                      class="w-7 h-7 rounded-full glass flex items-center justify-center hover:bg-white/10 font-bold">
-                <i class="pi pi-minus text-xs"></i>
-              </button>
-              <span class="w-7 text-center font-black text-sm">{{item.qty}}</span>
-              <button type="button" (click)="updateQty(item.title, 1)" title="Increase"
-                      class="w-7 h-7 rounded-full glass flex items-center justify-center hover:bg-white/10 font-bold">
-                <i class="pi pi-plus text-xs"></i>
-              </button>
-            </div>
-            <button type="button" (click)="removeFromCart(item.title)" title="Remove"
-                    class="p-1.5 opacity-40 hover:opacity-100 transition-opacity shrink-0">
-              <i class="pi pi-trash text-sm"></i>
-            </button>
-          </div>
-
-          <!-- Action icons -->
-          <div class="flex items-center gap-2 pt-1">
-            <a [href]="cartWhatsappUrl()" target="_blank" title="Send enquiry via WhatsApp"
-               class="btn-gloss rounded-full w-10 h-10 flex items-center justify-center shrink-0">
-              <i class="pi pi-whatsapp text-base"></i>
-            </a>
-            <button type="button" title="Send enquiry via Email"
-                    (click)="showCartEmail = !showCartEmail"
-                    class="glass rounded-full w-10 h-10 flex items-center justify-center shrink-0 hover:bg-white/10 transition-all"
-                    [class.btn-gloss]="showCartEmail">
-              <i class="pi pi-envelope text-base" [class.text-[var(--c2)]]="!showCartEmail"></i>
-            </button>
-          </div>
-
-          <!-- Email compose + preview panel -->
-          <div *ngIf="showCartEmail" class="glass rounded-none flex flex-col gap-4 p-5">
-
-            <!-- Sender fields -->
-            <div class="flex items-center justify-between">
-              <h3 class="font-black text-base">Compose Email</h3>
-              <button type="button" (click)="showCartEmail = false" title="Close"
-                      class="opacity-50 hover:opacity-100 transition-opacity">
-                <i class="pi pi-times text-sm"></i>
-              </button>
-            </div>
-            <div class="grid md:grid-cols-2 gap-3">
-              <div>
-                <label class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-1">Your Name</label>
-                <input type="text" class="form-input" placeholder="Full name"
-                       [value]="cartEmailName" (input)="cartEmailName = $any($event.target).value" />
+          <div class="admin-card-block admin-preview-only">
+            <article class="category-card admin-preview-card" [style.--accent]="unit.color">
+              <div class="card-top">
+                <div class="cat-icon">{{unit.icon}}</div>
+                <span class="soon" *ngIf="unit.soon">Coming Soon</span>
               </div>
-              <div>
-                <label class="text-xs font-black uppercase tracking-widest text-[var(--muted)] block mb-1">Your Email</label>
-                <input type="email" class="form-input" placeholder="your@email.com"
-                       [value]="cartEmailFrom" (input)="cartEmailFrom = $any($event.target).value" />
-              </div>
+              <div class="category-img"><img [src]="unit.image" [alt]="unit.title" /></div>
+              <h2>{{unit.title}}</h2>
+              <p>{{unit.subtitle}}</p>
+              <ul>
+                <li *ngFor="let feature of unit.features"><span>&#10003;</span>{{feature}}</li>
+              </ul>
+              <button type="button" class="explore-btn">Explore -></button>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-panel business-admin" *ngIf="adminTab === 'business' && adminSelection === 'product' && selectedProduct as product">
+        <div class="admin-two-pane product-admin-pane">
+          <div class="admin-edit-actions admin-product-actions">
+            <div class="admin-edit-left">
+              <div><span class="eyebrow">Product</span><h2>{{product.title}}</h2></div>
+              <button type="button" class="admin-icon-action" title="Save Product" aria-label="Save Product" (click)="saveProductToDb()"><i class="pi pi-save"></i></button>
+              <button type="button" class="admin-icon-action danger" title="Delete Product" aria-label="Delete Product" (click)="deleteProduct(selectedProductIndex)"><i class="pi pi-trash"></i></button>
             </div>
-
-            <!-- Full email preview -->
-            <div>
-              <p class="text-xs font-black uppercase tracking-widest text-[var(--muted)] mb-2">Email Preview</p>
-
-              <!-- Email shell -->
-              <div class="email-preview rounded-xl overflow-hidden text-sm">
-
-                <!-- Email header bar -->
-                <div class="email-header px-4 py-3 flex flex-col gap-1 text-xs">
-                  <div class="flex gap-2">
-                    <span class="email-label font-black w-14 shrink-0">To:</span>
-                    <span>cccproducts2017&#64;gmail.com</span>
+          </div>
+          <div class="admin-card-block">
+            <section class="admin-editor-group">
+              <h3>Product Details</h3>
+              <div class="admin-grid two compact">
+                <label>Product Name<input [(ngModel)]="product.title" (ngModelChange)="saveAdminContent()" /></label>
+                <label>Base<select [(ngModel)]="product.base" (ngModelChange)="saveAdminContent()"><option *ngFor="let item of supportedBasesForProduct(product)" [value]="item">{{item}}</option></select></label>
+                <label>Type<select [(ngModel)]="product.baseType" (ngModelChange)="saveAdminContent()"><option *ngFor="let item of supportedTypesForProduct(product)" [value]="item">{{item}}</option></select></label>
+                <label>Product Image
+                  <div class="admin-image-url-field">
+                    <input [(ngModel)]="product.image" (ngModelChange)="saveAdminContent()" />
+                    <button type="button" class="admin-icon-action small" title="Preview Product Image" aria-label="Preview Product Image" (click)="openImagePreview(product.image)"><i class="pi pi-eye"></i></button>
+                    <label class="admin-icon-action small package-select-image" title="Select Product Image" aria-label="Select Product Image">
+                      <i class="pi pi-image"></i>
+                      <input type="file" accept="image/*" (change)="handleImageUpload($event, product)" />
+                    </label>
                   </div>
-                  <div class="flex gap-2">
-                    <span class="email-label font-black w-14 shrink-0">From:</span>
-                    <span>{{cartEmailFrom || 'your@email.com'}}</span>
-                  </div>
-                  <div class="flex gap-2">
-                    <span class="email-label font-black w-14 shrink-0">Subject:</span>
-                    <span class="font-semibold">Product Enquiry — Crescent Commercials</span>
+                </label>
+                <label class="wide">Short Description<input [(ngModel)]="product.shortDescription" (ngModelChange)="saveAdminContent()" /></label>
+                <label class="wide">Description<textarea class="product-description-textarea" [(ngModel)]="product.description" (ngModelChange)="saveAdminContent()"></textarea></label>
+              </div>
+            </section>
+
+            <section class="admin-editor-group">
+              <div class="admin-repeat-head"><h3>Product Features</h3><button type="button" class="admin-gloss-action package-add-icon" title="Add Feature" aria-label="Add Feature" (click)="addProductFeature(product)"><i class="pi pi-plus"></i></button></div>
+              <div class="admin-scroll-group feature-scroll">
+                <div class="admin-row feature-row" *ngFor="let feature of product.features; let i = index">
+                  <div class="admin-url-input-wrap admin-inline-delete-field">
+                    <input [(ngModel)]="product.features[i]" (ngModelChange)="saveAdminContent()" />
+                    <button type="button" class="simple-circle-x inside-field" title="Delete Feature" aria-label="Delete Feature" (click)="removeProductFeature(product, i)">x</button>
                   </div>
                 </div>
-
-                <!-- Email body -->
-                <div class="email-body px-5 py-4 flex flex-col gap-4 text-sm leading-6">
-
-                  <p>Dear Crescent Commercials,</p>
-                  <p>I am interested in purchasing the following products. Please share pricing and availability.</p>
-
-                  <!-- Product table -->
-                  <table class="w-full text-xs border-collapse email-table">
-                    <thead>
-                      <tr class="email-thead">
-                        <th class="text-left px-3 py-2 font-black">#</th>
-                        <th class="text-left px-3 py-2 font-black">Product</th>
-                        <th class="text-left px-3 py-2 font-black">Category</th>
-                        <th class="text-right px-3 py-2 font-black">Qty</th>
-                        <th class="text-right px-3 py-2 font-black">Unit Price</th>
-                        <th class="text-right px-3 py-2 font-black">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let item of cartItems; let i = index" class="email-row">
-                        <td class="px-3 py-2.5 email-cell-muted">{{i + 1}}</td>
-                        <td class="px-3 py-2.5 font-semibold">{{item.title}}</td>
-                        <td class="px-3 py-2.5 email-cell-muted">{{item.category}}</td>
-                        <td class="px-3 py-2.5 text-right font-bold">{{item.qty}}</td>
-                        <td class="px-3 py-2.5 text-right email-cell-muted italic">TBD</td>
-                        <td class="px-3 py-2.5 text-right email-cell-muted italic">TBD</td>
-                      </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr class="email-tfoot">
-                        <td colspan="5" class="px-3 py-2.5 text-right font-black">Grand Total</td>
-                        <td class="px-3 py-2.5 text-right font-black italic">TBD</td>
-                      </tr>
-                    </tfoot>
-                  </table>
-
-                  <p>Please confirm availability and share pricing at your earliest convenience.</p>
-
-                  <!-- Signature -->
-                  <div class="email-sig pt-1 border-t text-xs flex flex-col gap-0.5">
-                    <p class="font-black">{{cartEmailName || 'Your Name'}}</p>
-                    <p class="email-cell-muted">{{cartEmailFrom || 'your@email.com'}}</p>
-                  </div>
-
-                </div>
               </div>
-            </div>
-
-            <a [href]="cartEmailUrl()" title="Open email client"
-               class="btn-gloss flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm justify-center">
-              <i class="pi pi-send text-sm"></i> Send via Email Client
-            </a>
+            </section>
           </div>
-
+          <div class="admin-card-block admin-preview-only">
+            <div class="admin-product-preview-stack">
+              <section class="admin-editor-group admin-preview-package-group">
+                <div class="admin-repeat-head package-title-row">
+                  <h3>Packaging Prices</h3>
+                  <button type="button" class="admin-gloss-action package-add-icon" title="Add Package" aria-label="Add Package" (click)="addPackageSize(product)"><i class="pi pi-plus"></i></button>
+                </div>
+                <div class="admin-package-table">
+                  <div class="admin-package-table-head">
+                    <span>Package Size</span>
+                    <span>Price</span>
+                    <span>Preview</span>
+                    <span>Delete</span>
+                  </div>
+                  <div class="admin-scroll-group package-scroll">
+                    <div class="admin-package-table-row" *ngFor="let price of product.packagePrices; let i = index" [class.selected]="selectedPackage(product)?.packageSize === price.packageSize" (click)="selectProductPackage(product, price)">
+                      <select [(ngModel)]="price.packageSize" (click)="selectProductPackage(product, price)" (ngModelChange)="setPackageSize(product, i, price.packageSize); selectProductPackage(product, price)"><option *ngFor="let pack of supportedPacksForProduct(product)" [value]="pack">{{pack}}</option></select>
+                      <input [(ngModel)]="price.price" (click)="selectProductPackage(product, price)" (ngModelChange)="saveAdminContent()" placeholder="Price" />
+                      <div class="package-preview-actions">
+                        <button type="button" class="package-preview-icon" [class.has-image]="packagePreviewImage(price)" title="Preview Package Image" aria-label="Preview Package Image" (click)="openImagePreview(packagePreviewImage(price))">
+                          <i class="pi pi-eye" *ngIf="packagePreviewImage(price)"></i>
+                          <i class="pi pi-image" *ngIf="!packagePreviewImage(price)"></i>
+                        </button>
+                        <label class="admin-icon-action small package-select-image" title="Select Image" aria-label="Select Image">
+                          <i class="pi pi-image"></i>
+                          <input type="file" accept="image/*" (change)="handlePackageImageUpload($event, price)" />
+                        </label>
+                        <button type="button" class="simple-circle-x package-image-delete" *ngIf="packagePreviewImage(price)" title="Delete Package Image" aria-label="Delete Package Image" (click)="removePackageImage(price, 0)">x</button>
+                      </div>
+                      <button type="button" class="simple-circle-x" title="Delete Package" aria-label="Delete Package" (click)="removePackageSize(product, i)">x</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <article class="wax-card admin-preview-product">
+                <button class="heart" type="button">&#9825;</button>
+                <div class="wax-img"><img [src]="productDisplayImage(product)" [alt]="product.title" /></div>
+                <h2>{{product.title}}</h2>
+                <small>{{product.category}}</small>
+                <p class="product-desc">{{product.shortDescription || product.description}}</p>
+                <strong>{{productDisplayPrice(product)}}</strong>
+                <ul>
+                  <li *ngFor="let feature of product.features"><span>&#10003;</span>{{feature}}</li>
+                </ul>
+                <div class="admin-preview-packages" *ngIf="product.packagePrices?.length">
+                  <button type="button" *ngFor="let price of product.packagePrices" [class.selected]="selectedPackage(product)?.packageSize === price.packageSize" (click)="selectProductPackage(product, price)">
+                    <span>Package</span>
+                    <b>{{price.packageSize}}</b>
+                    <span>Price</span>
+                    <strong>{{price.price}}</strong>
+                  </button>
+                </div>
+              </article>
+            </div>
+          </div>
         </div>
       </div>
 
-    </div><!-- /content area -->
+      <div class="admin-panel" *ngIf="['bases','baseTypes','packs','packSizes'].includes(adminTab)">
+        <div class="admin-panel-head">
+          <div><span class="eyebrow">Master Tables</span><h2>{{currentMasterTitle}}</h2></div>
+          <button type="button" class="gold-btn" (click)="addMasterValue()">Add {{currentMasterTitle}}</button>
+        </div>
+        <p class="admin-note">Values referenced by a Business Unit or Product cannot be deleted.</p>
+        <div class="admin-row" *ngFor="let item of currentMasterList; let i = index">
+          <input [(ngModel)]="currentMasterList[i]" (ngModelChange)="saveAdminContent()" />
+          <button type="button" [disabled]="isMasterValueReferenced(item)" (click)="removeMasterValue(i)">{{isMasterValueReferenced(item) ? 'Referenced' : 'Delete'}}</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  </div><!-- /unified glass card -->
+  <div class="admin-modal-backdrop" *ngIf="isAdminPage && showUnsavedPrompt">
+    <div class="admin-unsaved-modal" (click)="$event.stopPropagation()">
+      <div class="admin-modal-head">
+        <div>
+          <span class="eyebrow">Unsaved Changes</span>
+          <h3>Stay on this page?</h3>
+        </div>
+      </div>
+      <p>The current changes are not saved. Stay here and use the Save button, or discard the changes and continue to the selected item.</p>
+      <div class="admin-modal-actions">
+        <button type="button" class="admin-gloss-action danger" (click)="discardAdminChangesAndContinue()"><i class="pi pi-trash"></i><span>Discard</span></button>
+        <button type="button" class="admin-gloss-action" (click)="stayOnCurrentAdminEdit()"><i class="pi pi-arrow-left"></i><span>Stay</span></button>
+      </div>
+    </div>
+  </div>
 
+  <div class="admin-modal-backdrop" *ngIf="previewImageUrl" (click)="closeImagePreview()">
+    <div class="admin-image-modal" (click)="$event.stopPropagation()">
+      <button type="button" class="admin-modal-close" (click)="closeImagePreview()">x</button>
+      <img [src]="previewImageUrl" alt="Package preview" />
+    </div>
+  </div>
 
+  <div class="admin-modal-backdrop" *ngIf="isAdminPage && supportPopupKey && selectedBusinessUnit as unit" (click)="closeSupportPopup()">
+    <div class="admin-support-modal" (click)="$event.stopPropagation()">
+      <div class="admin-modal-head">
+        <h3>Add {{supportPopupTitle()}}</h3>
+        <button type="button" class="admin-modal-close" (click)="closeSupportPopup()">x</button>
+      </div>
+      <div class="admin-search-row">
+        <div class="admin-search-field">
+          <input placeholder="Search" [(ngModel)]="supportSearch[supportPopupKey]" />
+          <button type="button" (click)="clearSupportSearch(supportPopupKey)">x</button>
+        </div>
+      </div>
+      <div class="admin-popup-list">
+        <label *ngFor="let item of filteredSupportPopupValues()">
+          <input type="checkbox" [checked]="unit[supportPopupKey]?.includes(item)" (change)="toggleUnitMasterValue(unit, supportPopupKey, item)" />
+          <span>{{item}}</span>
+        </label>
+      </div>
+      <div class="admin-modal-actions support-actions">
+        <button type="button" class="admin-gloss-action" (click)="closeSupportPopup()">Done</button>
+      </div>
+    </div>
+  </div>
+  <footer class="cc-footer" *ngIf="!isAdminPage">
+    <div class="footer-brand">
+      <img src="assets/Logo/CCLogo.png" alt="Crescent Commercials" />
+      <div class="footer-brand-info">
+        <strong>Crescent Commercials</strong>
+        <div class="footer-socials">
+          <a [href]="openWhatsApp('')" target="_blank" class="fsoc-btn" title="WhatsApp"><i class="pi pi-whatsapp"></i></a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" class="fsoc-btn" title="Facebook"><i class="pi pi-facebook"></i></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" class="fsoc-btn" title="Instagram"><i class="pi pi-instagram"></i></a>
+          <a href="https://youtube.com" target="_blank" rel="noopener" class="fsoc-btn" title="YouTube"><i class="pi pi-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <div class="footer-icon-row">
+        <button type="button" (click)="setView('home')" title="Home"><i class="pi pi-home"></i></button>
+        <button type="button" (click)="setView('products')" title="Products"><i class="pi pi-box"></i></button>
+        <button type="button" (click)="setView('contact')" title="Contact Us"><i class="pi pi-envelope"></i></button>
+      </div>
+    </div>
+    <div>
+      <h4>Business Unit</h4>
+      <div class="footer-icon-row">
+        <button type="button" class="footer-business-icon" *ngFor="let unit of productCategories | slice:0:4" (click)="setView(unit.id)" [title]="unit.title" [style.--accent]="unit.color"><span class="cat-icon">{{unit.icon}}</span></button>
+      </div>
+    </div>
+    <div><h4>Contact Info</h4><p>Phone +91 90921 54605</p><p>Email cccproducts2017&#64;gmail.com</p></div>
+    <div>
+      <h4>Stay Updated</h4>
+      <div class="subscribe"><input placeholder="Enter your email"><button type="button" title="Subscribe" aria-label="Subscribe"><i class="pi pi-send"></i></button></div>
+    </div>
+  </footer>
+
+  <div class="copyright" *ngIf="!isAdminPage">
+    <span>Copyright 2026 Crescent Commercials. All rights reserved.</span>
+    <a href="https://techno-phile.com" target="_blank" rel="noopener" class="techno-credit">
+      <span class="techno-by">Designed &amp; Maintained by:</span>      
+      <span class="techno-name">Technophile</span>
+      <img src="assets/Logo/TechnophileLogo.png" alt="Technophile" class="techno-logo" />      
+    </a>
+    <span class="legal-links"><button type="button" (click)="openLegalModal('privacy')">Privacy Policy</button><i>|</i><button type="button" (click)="openLegalModal('terms')">Terms &amp; Conditions</button></span>
+  </div>
+
+  <div class="legal-backdrop" *ngIf="!isAdminPage && legalModalTitle" (click)="closeLegalModal()">
+    <div class="legal-modal" (click)="$event.stopPropagation()">
+      <button type="button" class="product-detail-close" title="Close" aria-label="Close" (click)="closeLegalModal()">x</button>
+      <h2>{{legalModalTitle}}</h2>
+      <div class="legal-content" [innerHTML]="legalModalContent"></div>
+    </div>
+  </div>
 </main>
+
